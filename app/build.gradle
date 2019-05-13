@@ -6,9 +6,10 @@ android {
         applicationId "com.mecewe.ocrtest"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionCode 2
+        versionName "1.0.1"
+        //testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        resValue "string", "updatefun_provider_file_authorities", "com.mecewe.ocrtest.fileprovider"
     }
     buildTypes {
         release {
@@ -25,5 +26,10 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation 'com.mindorks:paracamera:0.2.2'
+    //implementation 'com.mindorks:paracamera:0.2.2'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:mockwebserver:3.7.0'
+    implementation 'cn.hugeterry.updatefun:updatefun:2.0.6'
+//    compile project(':updatefun')
+//    implementation 'com.trycatch.android:myupdateapklibrary:1.4.4'
 }

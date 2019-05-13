@@ -7,6 +7,7 @@ import android.graphics.Camera;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,6 +30,17 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+//import cn.hugeterry.updatefun.UpdateFunGO;
+//import cn.hugeterry.updatefun.config.UpdateKey;
+import cn.hugeterry.updatefun.UpdateFunGO;
+import cn.hugeterry.updatefun.config.UpdateKey;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
     String localTempImgFileName;
@@ -40,6 +54,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        UpdateKey.API_TOKEN = "3bf4511d24a7f70bd0131c6797a42b4e";
+        UpdateKey.APP_ID = "5cb6a890959d693a0b7aa475";
+        UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;
+        UpdateFunGO.init(this);
+//        UpdateKey.WITH_DIALOG=true;
+//        UpdateKey.WITH_NOTIFITION=true;
+//        UpdateApk.init(this);
+//下载方式:
+//UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;通过Dialog来进行下载
+//UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
+//        UpdateFunGO.init(this);
+
+        Button jump =(Button)findViewById(R.id.jump);
         imgdata = (TextView)findViewById(R.id.text_data);
         imgdata.setMovementMethod(ScrollingMovementMethod.getInstance());
         img = (ImageView)findViewById(R.id.img);
@@ -53,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
 //                .setCompression(75)
 //                .setImageHeight(300)
 //                .build(this);
+
+        jump.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this,Base64Activity.class);
+                startActivity(intent);
+            }
+        });
 
         photoButton.setOnClickListener(new View.OnClickListener() {
 
@@ -133,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
 //                } catch (IOException e) {
 //                    e.printStackTrace();
 //                }
-
+                Log.e("bb7",bb.toString());
                 img.setImageBitmap(bb);
                 Log.e("img",img.toString());
                 getImgBase64(img);
@@ -143,6 +178,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+//        //更新
+//        UpdateApk.destory();
+        //图片读取
         File f=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+File.separator+"zhycheng.jpg");
         if(f.exists())
         {
@@ -151,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
 //            fileToBase64(f.toString());
             f.delete();
         }
+
 
     }
 
@@ -213,13 +252,62 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG,100,bos);
         byte[] bb = bos.toByteArray();
-        String image = Base64.encodeToString(bb, Base64.NO_WRAP);
+        final String image = Base64.encodeToString(bb, Base64.NO_WRAP);
 //        String image2 = Base64.encodeToString(Bitmap.CompressFormat.PNG, Base64.NO_WRAP);
         Log.e("base64",image);
+
 //        Log.e("base64 2",image2);
         imgdata.setText(image);
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    sendBdWithOKhttp(image);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Looper.prepare();
+                    Toast.makeText(MainActivity.this, e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    Looper.loop();
+                }
+            }
+        }).start();
         return image;
+    }
+
+     public void sendBdWithOKhttp(String img) {
+        HttpUtil.sendPost(img, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseData = response.body().string();
+                int i = 0;
+                Log.e("data", "l=" + responseData.length());
+                Log.e("data", responseData);
+//                Gson gson = new Gson();
+//                JsonParser parser = new JsonParser();
+//                JsonArray jsonArray = parser.parse(responseData).getAsJsonArray();
+//                num=jsonArray.size();
+//                Log.e("|||||",String.valueOf(jsonArray.size()));
+//                Log.e("data", jsonArray.toString());
+//
+//                showResponse(responseData);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UpdateFunGO.onResume(this);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        UpdateFunGO.onStop(this);
     }
 
 }
