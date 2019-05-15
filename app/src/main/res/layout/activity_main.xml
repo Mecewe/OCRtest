@@ -43,44 +43,47 @@
             android:src="@drawable/scan_22" />
 
     </LinearLayout>
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="20dp">
+
         <Button
-            android:layout_gravity="right"
             android:id="@+id/jump"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="跳转"/>
-        <Button
             android:layout_gravity="right"
+            android:text="跳转" />
+
+        <Button
             android:id="@+id/jump2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="跳转"/>
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:text="build5" />
 
         <ImageView
             android:id="@+id/img"
-            android:layout_gravity="center"
             android:layout_width="250dp"
-            android:layout_height="250dp" />
+            android:layout_height="250dp"
+            android:layout_gravity="center" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="base64："
-            android:textSize="20dp"/>
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/text_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="false"
             android:maxLines="10"
             android:scrollbars="vertical"
-            android:text=""/>
+            android:singleLine="false"
+            android:text="" />
 
     </LinearLayout>
 </LinearLayout>
